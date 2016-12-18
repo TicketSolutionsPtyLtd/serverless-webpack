@@ -4,7 +4,7 @@ const BbPromise = require('bluebird');
 
 const validate = require('./lib/validate');
 const compile = require('./lib/compile');
-const wpwatch = require('./lib/wpwatch');
+const watchAll = require('./lib/watch');
 const cleanup = require('./lib/cleanup');
 const run = require('./lib/run');
 const serve = require('./lib/serve');
@@ -19,7 +19,7 @@ class ServerlessWebpack {
       this,
       validate,
       compile,
-      wpwatch,
+      watchAll,
       cleanup,
       run,
       serve,
@@ -66,12 +66,19 @@ class ServerlessWebpack {
               function: {
                 usage: 'Name of the function',
                 shortcut: 'f',
-                required: true,
               },
               path: {
                 usage: 'Path to JSON file holding input data',
                 shortcut: 'p',
               },
+            },
+          },
+          watchAll: {
+            usage: 'Watch all the functions and bundle every time the source is changed',
+            lifecycleEvents: [
+              'watchAll',
+            ],
+            options: {
             },
           },
           serve: {
@@ -120,9 +127,13 @@ class ServerlessWebpack {
         .then(this.validate)
         .then(this.serve),
 
+      'webpack:watchAll:watchAll': () => BbPromise.bind(this)
+        .then(this.validate)
+        .then(this.watchAll),
+
       'before:offline:start': () => BbPromise.bind(this)
         .then(this.validate)
-        .then(this.wpwatch),
+        .then(this.watchAll),
     };
   }
 }

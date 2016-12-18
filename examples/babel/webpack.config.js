@@ -1,12 +1,11 @@
 module.exports = {
   entry: './handler.js',
   target: 'node',
+  devtool: "source-map",
   module: {
-    loaders: [{
+    rules: [{
       test: /\.js$/,
-      loaders: ['babel'],
-      include: __dirname,
-      exclude: /node_modules/,
+      loader: 'babel-loader'
     }]
   }
 };
